@@ -7,17 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="style.css">
     <title>WEB2 - JavaScript</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="colors.js"></script>
 </head>
 
 <body>
     <h1><a href="index.html">WEB</a></h1>
-    <input type="button" value="night" onclick="
-        document.querySelector('body').style.backgroundColor = 'black';
-        document.querySelector('body').style.color = 'white';
-    ">
-    <input type="button" value="day" onclick="
-        document.querySelector('body').style.backgroundColor = 'white';
-        document.querySelector('body').style.color = 'black';
+    <input id="night_day" type="button" value="night" onclick="
+        nightDayHandler(this);
     ">
     <div id="grid">
         <ol>
@@ -28,14 +25,21 @@
         <div id="article">
             <h2>JavaScript</h2>
             <p>
-                JavaScript (/ˈdʒɑːvəˌskrɪpt/[6]), often abbreviated as JS, is a high-level, dynamic, weakly typed, prototype-based, multi-paradigm,
-                and interpreted programming language. Alongside HTML and CSS, JavaScript is one of the three core technologies
-                of World Wide Web content production. It is used to make webpages interactive and provide online programs,
-                including video games. The majority of websites employ it, and all modern web browsers support it without
-                the need for plug-ins by means of a built-in JavaScript engine. Each of the many JavaScript engines represent
-                a different implementation of JavaScript, all based on the ECMAScript specification, with some engines not
+                JavaScript (/ˈdʒɑːvəˌskrɪpt/[6]), often abbreviated as JS, is a high-level, dynamic, weakly typed,
+                prototype-based, multi-paradigm,
+                and interpreted programming language. Alongside HTML and CSS, JavaScript is one of the three core
+                technologies
+                of World Wide Web content production. It is used to make webpages interactive and provide online
+                programs,
+                including video games. The majority of websites employ it, and all modern web browsers support it
+                without
+                the need for plug-ins by means of a built-in JavaScript engine. Each of the many JavaScript engines
+                represent
+                a different implementation of JavaScript, all based on the ECMAScript specification, with some engines
+                not
                 supporting the spec fully, and with many engines supporting additional features beyond ECMA.
             </p>
+            <a href="3-1.html">about Object</a>
         </div>
     </div>
 </body>
