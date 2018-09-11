@@ -1,11 +1,11 @@
 var Body = {
     setBackgroundColor: function (color) {
         // document.querySelector('body').style.backgroundColor = color;
-        $('body').css('color', color);
+        $('body').css('backgroundColor', color);
     },
     setColor: function (color) {
         // document.querySelector('body').style.color = color;
-        $('body').css('backgroundcolor', color);
+        $('body').css('color', color);
     }
 }
 
