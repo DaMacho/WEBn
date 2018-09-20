@@ -2,6 +2,41 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 
+function templateList(filelist){
+    var list = `<ul>`;
+    var i = 0;
+    while(i < filelist.length-1){
+        list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+        i++
+    }
+    list = list+`</ul>`;
+    return list;
+}
+
+function templateHTML(title, list, description){
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>WEBn - ${title}</title>
+    </head>
+    <body>
+        <h1><a href="/">WEB</a></h1>
+        <div>
+            ${list}
+            <div>
+                <h2>${title}</h2>
+                <p>${description}</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+}
+
 var app = http.createServer(function (request, response) {
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
@@ -16,36 +51,38 @@ var app = http.createServer(function (request, response) {
         }
 
         fs.readdir('data', function(error, filelist){
-            var list = `<ul>`;
-            var i = 0;
-            while(i < filelist.length-1){
-                list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
-                i++
-            }
-            list = list+`</ul>`;
+            // var list = `<ul>`;
+            // var i = 0;
+            // while(i < filelist.length-1){
+            //     list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+            //     i++
+            // }
+            // list = list+`</ul>`;
 
             fs.readFile(`data/${title}`, 'utf-8', function(err, description){
-                var template = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-                    <title>WEBn - ${title}</title>
-                </head>
-                <body>
-                    <h1><a href="/">WEB</a></h1>
-                    <div>
-                        ${list}
-                        <div>
-                            <h2>${title}</h2>
-                            <p>${description}</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                `;
+                var list = templateList(filelist);
+                var template = templateHTML(title, list, description);
+                // var template = `
+                // <!DOCTYPE html>
+                // <html>
+                // <head>
+                //     <meta charset="UTF-8">
+                //     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                //     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                //     <title>WEBn - ${title}</title>
+                // </head>
+                // <body>
+                //     <h1><a href="/">WEB</a></h1>
+                //     <div>
+                //         ${list}
+                //         <div>
+                //             <h2>${title}</h2>
+                //             <p>${description}</p>
+                //         </div>
+                //     </div>
+                // </body>
+                // </html>
+                // `;
                 response.writeHead(200);
                 response.end(template);
             })
