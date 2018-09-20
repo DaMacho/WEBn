@@ -8,40 +8,47 @@ var app = http.createServer(function (request, response) {
     var pathname = url.parse(_url, true).pathname;
     var title = queryData.id;
     
-    console.log(queryData.id);
+    console.log(url.parse(_url, true));
 
     if (pathname === '/') {
         if (queryData.id === undefined) {
             title = 'WEB';
         }
-        fs.readFile(`data/${title}`, 'utf-8', function(err, description){
-            var template = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta http-equiv="X-UA-Compatible" content="ie=edge">
-                <title>WEBn - ${title}</title>
-            </head>
-            <body>
-                <h1><a href="/">WEB</a></h1>
-                <div>
-                    <ol>
-                        <li><a href="/?id=HTML">HTML</a></li>
-                        <li><a href="/?id=CSS">CSS</a></li>
-                        <li><a href="/?id=JavaScript">JavaScript</a></li>
-                    </ol>
+
+        fs.readdir('data', function(error, filelist){
+            var list = `<ul>`;
+            var i = 0;
+            while(i < filelist.length-1){
+                list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+                i++
+            }
+            list = list+`</ul>`;
+
+            fs.readFile(`data/${title}`, 'utf-8', function(err, description){
+                var template = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                    <title>WEBn - ${title}</title>
+                </head>
+                <body>
+                    <h1><a href="/">WEB</a></h1>
                     <div>
-                        <h2>${title}</h2>
-                        <p>${description}</p>
+                        ${list}
+                        <div>
+                            <h2>${title}</h2>
+                            <p>${description}</p>
+                        </div>
                     </div>
-                </div>
-            </body>
-            </html>
-            `;
-            response.writeHead(200);
-            response.end(template);
+                </body>
+                </html>
+                `;
+                response.writeHead(200);
+                response.end(template);
+            })
         })
     } else {
         response.writeHead(404);
