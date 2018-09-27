@@ -42,12 +42,10 @@ var app = http.createServer(function (request, response) {
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
     var title = queryData.id;
-    
-    console.log(url.parse(_url, true));
 
     if (pathname === '/') {
         if (queryData.id === undefined) {
-            title = 'WEB';
+            var title = 'WEB';
         }
         fs.readdir('data', function(error, filelist){
             fs.readFile(`data/${title}`, 'utf-8', function(err, description){
@@ -55,12 +53,32 @@ var app = http.createServer(function (request, response) {
                 var template = templateHTML(title, list, description);
                 response.writeHead(200);
                 response.end(template);
-            })
-        })
+            });
+        });
+    } else if (pathname === '/create') {
+        fs.readdir('./data', function(error, filelist){
+            title = 'WEB - create';
+            var list = templateList(filelist);
+            var template = templateHTML(title, list, `
+                <form action="http://localhost:3000/process_create" method="post">
+                    <p>
+                        <input type="text" name="title" placeholder="title">
+                    </p>
+                    <p>
+                        <textarea name="description" placeholder="description"></textarea>
+                    </p>
+                    <p>
+                        <input type="submit">
+                    </p>
+                </form>
+            `);
+            response.writeHead(200);
+            response.end(template);
+        });
     } else {
         response.writeHead(404);
         response.end('Page not found');
     }
 });
 
-app.listen(3000)
+app.listen(3000);
