@@ -28,6 +28,7 @@ function templateHTML(title, list, description){
         <h1><a href="/">WEB</a></h1>
         <div>
             ${list}
+            <a href="/create">create</a>
             <div>
                 <h2>${title}</h2>
                 <p>${description}</p>
@@ -85,9 +86,11 @@ var app = http.createServer(function (request, response) {
             var post = qs.parse(body);
             var title = post.title;
             var description = post.description;
+            fs.writeFile(`data/${title}`, description, 'utf8', function(err){
+                response.writeHead(302, {Location: `/?id=${title}`});
+                response.end();
+            });
         });
-        response.writeHead(200);
-        response.end('success');
     } else {
         response.writeHead(404);
         response.end('Page not found');
