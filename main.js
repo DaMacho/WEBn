@@ -14,7 +14,7 @@ function templateList(filelist){
     return list;
 }
 
-function templateHTML(title, list, description){
+function templateHTML(title, list, description, control){
     return `
     <!DOCTYPE html>
     <html>
@@ -28,7 +28,7 @@ function templateHTML(title, list, description){
         <h1><a href="/">WEB</a></h1>
         <div>
             ${list}
-            <a href="/create">create</a>
+            ${control}
             <div>
                 <h2>${title}</h2>
                 <p>${description}</p>
@@ -38,6 +38,7 @@ function templateHTML(title, list, description){
     </html>
     `;
 }
+
 
 var app = http.createServer(function (request, response) {
     var _url = request.url;
@@ -52,7 +53,12 @@ var app = http.createServer(function (request, response) {
         fs.readdir('data', function(error, filelist){
             fs.readFile(`data/${title}`, 'utf-8', function(err, description){
                 var list = templateList(filelist);
-                var template = templateHTML(title, list, description);
+                var template = templateHTML(title, list, description, 
+                    `
+                    <a href="/create">create</a>
+                    <a href="/update?id=${title}">update</a>
+                    `
+                );
                 response.writeHead(200);
                 response.end(template);
             });
@@ -73,7 +79,7 @@ var app = http.createServer(function (request, response) {
                         <input type="submit">
                     </p>
                 </form>
-            `);
+            `, '');
             response.writeHead(200);
             response.end(template);
         });
