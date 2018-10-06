@@ -57,6 +57,10 @@ var app = http.createServer(function (request, response) {
                     `
                     <a href="/create">create</a>
                     <a href="/update?id=${title}">update</a>
+                    <form action="delete_process" method="POST">
+                        <input type="hidden" name="id" value="${title}">
+                        <input type="submit" value="delete">
+                    </form>
                     `
                 );
                 response.writeHead(200);
