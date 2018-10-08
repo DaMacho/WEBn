@@ -3,6 +3,44 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 
+var template = {
+    HTML:function(title, list, description, control){
+        return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>WEBn - ${title}</title>
+        </head>
+        <body>
+            <h1><a href="/">WEB</a></h1>
+            <div>
+                ${list}
+                ${control}
+                <div>
+                    <h2>${title}</h2>
+                    <p>${description}</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
+    },
+    list:function(filelist){
+        var list = `<ul>`;
+        var i = 0;
+        while(i < filelist.length-1){
+            list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+            i++
+        }
+        list = list+`</ul>`;
+        return list;
+    }
+};
+
+/*
 function templateList(filelist){
     var list = `<ul>`;
     var i = 0;
@@ -38,7 +76,7 @@ function templateHTML(title, list, description, control){
     </html>
     `;
 }
-
+*/
 
 var app = http.createServer(function (request, response) {
     var _url = request.url;
@@ -52,8 +90,8 @@ var app = http.createServer(function (request, response) {
         }
         fs.readdir('data', function(error, filelist){
             fs.readFile(`data/${title}`, 'utf-8', function(err, description){
-                var list = templateList(filelist);
-                var template = templateHTML(title, list, description, 
+                var list = template.list(filelist);
+                var html= template.HTML(title, list, description, 
                     `
                     <a href="/create">create</a>
                     <a href="/update?id=${title}">update</a>
@@ -64,14 +102,14 @@ var app = http.createServer(function (request, response) {
                     `
                 );
                 response.writeHead(200);
-                response.end(template);
+                response.end(html);
             });
         });
     } else if (pathname === '/create') {
         fs.readdir('./data', function(error, filelist){
             title = 'WEB - create';
-            var list = templateList(filelist);
-            var template = templateHTML(title, list, `
+            var list = template.list(filelist);
+            var html= template.HTML(title, list, `
                 <form action="/create_process" method="post">
                     <p>
                         <input type="text" name="title" placeholder="title">
@@ -85,7 +123,7 @@ var app = http.createServer(function (request, response) {
                 </form>
             `, '');
             response.writeHead(200);
-            response.end(template);
+            response.end(html);
         });
     } else if (pathname === '/create_process') {
         var body = '';
@@ -104,8 +142,8 @@ var app = http.createServer(function (request, response) {
     } else if (pathname === '/update') {
         fs.readdir('./data', function(error, filelist){
             fs.readFile(`data/${queryData.id}`, 'utf8', function(err, description) {
-                var list = templateList(filelist);
-                var template = templateHTML(title, list, 
+                var list = template.list(filelist);
+                var html= template.HTML(title, list, 
                 `
                 <form action="/update_process" method="post">
                     <input type="hidden" name="id" value="${title}">
@@ -121,7 +159,7 @@ var app = http.createServer(function (request, response) {
                 `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
                 );
                 response.writeHead(200);
-                response.end(template);
+                response.end(html);
             });
         });
     } else if (pathname === '/update_process') {
