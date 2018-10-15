@@ -1,0 +1,26 @@
+{
+  "name": "webn",
+  "version": "1.0.0",
+  "description": "생활코딩 - WEBn;",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "sanitize-html": "^1.19.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaMacho/WEBn.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DaMacho/WEBn/issues"
+  },
+  "homepage": "https://github.com/DaMacho/WEBn#readme"
+}
