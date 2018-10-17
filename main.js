@@ -4,7 +4,16 @@ var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
 var path = require('path');
-var sanitizeHtml = require('sanitize-html')
+var sanitizeHtml = require('sanitize-html');
+var mysql = require('mysql');
+var password = require('./secured/p.js');
+var db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: `${password}`,
+    database: 'opentutorials'
+});
+db.connect();
 
 var app = http.createServer(function (request, response) {
     var _url = request.url;
@@ -14,30 +23,41 @@ var app = http.createServer(function (request, response) {
 
     if (pathname === '/') {
         if (queryData.id === undefined) {
-            var title = 'WEB';
-        }
-        fs.readdir('data', function(error, filelist){
-            var filteredId = path.parse(title).base;
-	        fs.readFile(`data/${filteredId}`, 'utf-8', function(err, description){
-                var sanitizedTitle = sanitizeHtml(title);
-                var sanitizedDescription = sanitizeHtml(description, {
-                    allowedTags:['h1']
-                });
-                var list = template.list(filelist);
-                var html= template.HTML(sanitizedTitle, list, sanitizedDescription, 
-                    `
-                    <a href="/create">create</a>
-                    <a href="/update?id=${sanitizedTitle}">update</a>
-                    <form action="delete_process" method="POST">
-                        <input type="hidden" name="id" value="${sanitizedTitle}">
-                        <input type="submit" value="delete">
-                    </form>
-                    `
+            db.query(`SELECT * FROM topic`, function(error, topics) {
+                var title = 'Welcome';
+                var description = 'Hello, Node.js & MySQL';
+                var list = template.list(topics);
+                var html = template.HTML(title, list, 
+                    `${description}`,
+                    `<a href="/create">create</a>`
                 );
                 response.writeHead(200);
                 response.end(html);
             });
-        });
+        } else {
+            fs.readdir('data', function(error, filelist){
+                var filteredId = path.parse(title).base;
+                fs.readFile(`data/${filteredId}`, 'utf-8', function(err, description){
+                    var sanitizedTitle = sanitizeHtml(title);
+                    var sanitizedDescription = sanitizeHtml(description, {
+                        allowedTags:['h1']
+                    });
+                    var list = template.list(filelist);
+                    var html= template.HTML(sanitizedTitle, list, sanitizedDescription, 
+                        `
+                        <a href="/create">create</a>
+                        <a href="/update?id=${sanitizedTitle}">update</a>
+                        <form action="delete_process" method="POST">
+                            <input type="hidden" name="id" value="${sanitizedTitle}">
+                            <input type="submit" value="delete">
+                        </form>
+                        `
+                    );
+                    response.writeHead(200);
+                    response.end(html);
+                });
+            });
+        }
     } else if (pathname === '/create') {
         fs.readdir('./data', function(error, filelist){
             title = 'WEB - create';
