@@ -96,8 +96,7 @@ var app = http.createServer(function (request, response) {
                     }
                     response.writeHead(302, {Location: `/?id=${result.insertId}`});
                     response.end();
-                }
-            )
+            })
         });
     } else if (pathname === '/update') {
         db.query(`SELECT * FROM topic`, function(error, topics){
