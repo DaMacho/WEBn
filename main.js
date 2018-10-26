@@ -1,19 +1,12 @@
 var http = require('http');
-var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
-var path = require('path');
-var sanitizeHtml = require('sanitize-html');
-var mysql = require('mysql');
-var password = require('./secured/p.js');
-var db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: `${password}`,
-    database: 'opentutorials'
-});
-db.connect();
+var db = require('./secured/db');
+// var fs = require('fs');
+// var path = require('path');
+// var sanitizeHtml = require('sanitize-html');
+
 
 var app = http.createServer(function (request, response) {
     var _url = request.url;
@@ -38,7 +31,6 @@ var app = http.createServer(function (request, response) {
                 if (error){
                     throw error;
                 }
-                // db.query(`SELECT * FROM topic WHERE id=?`, [queryData.id], function(error2, topic){
                 db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=?`, [queryData.id], function(error2, topic){
                     if (error2) {
                         throw error2;
