@@ -1,16 +1,12 @@
 var http = require('http');
 var url = require('url');
-var qs = require('querystring');
-var template = require('./lib/template.js');
 var topic = require('./lib/topic');
-var db = require('./secured/db');
 
 
 var app = http.createServer(function (request, response) {
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
-    var title = queryData.id;
 
     if (pathname === '/') {
         if (queryData.id === undefined) {
