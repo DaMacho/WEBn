@@ -27,8 +27,9 @@ var app = http.createServer(function (request, response) {
         topic.delete_process(request, response);
     } else if (pathname === '/author') {
         author.home(request, response);
-    } else if (pathname === '/create_author_process') {
+    } else if (pathname === '/author/create_process') {
         author.create_process(request, response);
+    // } else if (pathname === ) {
     } else {
         response.writeHead(404);
         response.end('Page not found');
