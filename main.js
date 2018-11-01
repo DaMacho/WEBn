@@ -1,16 +1,26 @@
 const express = require('express')
+const fs = require('fs')
+const url = require('url')
+const qs = require('querystring')
+const template = require('./lib/template.js')
+const path = require('path')
+const sanitizeHtml = require('sanitize-html')
 const app = express()
 
 // route, routing
-app.get('/', (req, res) => res.send('Hello, World!'))
-// app.get('/', function(req, res){
-//     return res.send('Hello, World!');
-// });
+app.get('/', (req, res) => {
+    fs.readdir('./data', (error, filelist) => {
+        const title = 'Welcome'
+        const description = 'Hello, Node.js & Express'
+        const list = template.list(filelist)
+        const html = template.HTML(title, list, description,
+            `<a href="/create">create</a>`
+        )
+        res.send(html)
+    })
+})
 
 app.listen(3000, () => console.log('Example app linstening on port 3000!'))
-// app.listen(3000, function(){
-//     console.log('...');
-// });
 
 
 /*
