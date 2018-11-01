@@ -1,10 +1,9 @@
 const express = require('express')
 const fs = require('fs')
-const url = require('url')
-const qs = require('querystring')
-const template = require('./lib/template.js')
 const path = require('path')
 const sanitizeHtml = require('sanitize-html')
+const template = require('./lib/template.js')
+
 const app = express()
 
 // route, routing
@@ -17,6 +16,31 @@ app.get('/', (req, res) => {
             `<a href="/create">create</a>`
         )
         res.send(html)
+    })
+})
+
+app.get('/page/:pageId', (req, res) => {
+    fs.readdir('data', (error, filelist) => {
+        const filteredId = path.parse(req.params.pageId).base
+        fs.readFile(`data/${filteredId}`, 'utf-8', function(err, description){
+            const title = req.params.pageId
+            const sanitizedTitle = sanitizeHtml(title)
+            const sanitizedDescription = sanitizeHtml(description, {
+                allowedTags:['h1']
+            })
+            const list = template.list(filelist)
+            const html= template.HTML(sanitizedTitle, list, sanitizedDescription, 
+                `
+                <a href="/create">create</a>
+                <a href="/update?id=${sanitizedTitle}">update</a>
+                <form action="delete_process" method="POST">
+                    <input type="hidden" name="id" value="${sanitizedTitle}">
+                    <input type="submit" value="delete">
+                </form>
+                `
+            )
+            res.send(html)
+        })
     })
 })
 
