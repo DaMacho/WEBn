@@ -3,9 +3,15 @@ const fs = require('fs')
 const path = require('path')
 const qs = require('querystring')
 const sanitizeHtml = require('sanitize-html')
+const bodyParser = require('body-parser')
+const compression = require('compression')
 const template = require('./lib/template_express.js')
 
 const app = express()
+
+// process POST request
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(compression())
 
 // route, routing
 app.get('/', (req, res) => {
@@ -67,6 +73,7 @@ app.get('/create', (req, res) => {
 })
 
 app.post('/create_process', (req, res) => {
+    /*
     let body = ''
     req.on('data', (data) => {
         body = body + data
@@ -79,6 +86,14 @@ app.post('/create_process', (req, res) => {
             res.writeHead(302, {Location: `/?id=${title}`})
             res.end()
         })
+    })
+    */
+    const post = req.body
+    const title = post.title
+    const description = post.description
+    fs.writeFile(`data/${title}`, description, 'utf8', (err) => {
+        res.writeHead(302, {Location: `/?id=${title}`})
+        res.end()
     })
 })
 
@@ -109,35 +124,23 @@ app.get('/update/:pageId', (req, res) => {
 })
 
 app.post('/update_process', (req, res) => {
-    let body = ''
-    req.on('data', (data) => {
-        body = body + data
-    })
-    req.on('end', () => {
-        const post = qs.parse(body)
-        const id = post.id
-        const title = post.title
-        const description = post.description
-        fs.rename(`data/${id}`, `data/${title}`, (error) => {
-            fs.writeFile(`data/${title}`, description, 'utf8', (err) => {
-                res.redirect(`/page/${title}`)
-            })
+    const post = req.body
+    const id = post.id
+    const title = post.title
+    const description = post.description
+    fs.rename(`data/${id}`, `data/${title}`, (error) => {
+        fs.writeFile(`data/${title}`, description, 'utf8', (err) => {
+            res.redirect(`/page/${title}`)
         })
     })
 })
 
 app.post('/delete_process', (req, res) => {
-    let body = ''
-    req.on('data', (data) => {
-        body = body + data
-    })
-    req.on('end', () => {
-        const post = qs.parse(body)
-        const id = post.id
-        const filteredId = path.parse(id).base
-        fs.unlink(`data/${filteredId}`, (error) => {
-            res.redirect(`/`)
-        })
+    const post = req.body
+    const id = post.id
+    const filteredId = path.parse(id).base
+    fs.unlink(`data/${filteredId}`, (error) => {
+        res.redirect(`/`)
     })
 })
 
