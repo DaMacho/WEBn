@@ -1,3 +1,12 @@
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => res.send('Hello, World!'));
+
+app.listen(3000, () => console.log('Example app linstening on port 3000!'));
+
+
+/*
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
@@ -140,7 +149,7 @@ var port = 3000;
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
-
+*/
 
 /*
 const http = require('http');
