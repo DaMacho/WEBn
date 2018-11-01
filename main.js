@@ -1,6 +1,7 @@
 const express = require('express')
 const fs = require('fs')
 const path = require('path')
+const qs = require('querystring')
 const sanitizeHtml = require('sanitize-html')
 const template = require('./lib/template.js')
 
@@ -42,6 +43,43 @@ app.get('/page/:pageId', (req, res) => {
             res.send(html)
         })
     })
+})
+
+app.get('/create', (req, res) => {
+    fs.readdir('./data', (error, filelist) => {
+        title = 'WEB - create';
+        var list = template.list(filelist);
+        var html= template.HTML(title, list, `
+            <form action="/create_process" method="post">
+                <p>
+                    <input type="text" name="title" placeholder="title">
+                </p>
+                <p>
+                    <textarea name="description" placeholder="description"></textarea>
+                </p>
+                <p>
+                    <input type="submit">
+                </p>
+            </form>
+        `, '');
+        res.send(html);
+    })
+})
+
+app.post('/create_process', (req, res) => {
+    let body = ''
+    req.on('data', (data) => {
+        body = body + data
+    });
+    req.on('end', () => {
+        const post = qs.parse(body)
+        const title = post.title
+        const description = post.description
+        fs.writeFile(`data/${title}`, description, 'utf8', (err) => {
+            res.writeHead(302, {Location: `/?id=${title}`})
+            res.end()
+        });
+    });
 })
 
 app.listen(3000, () => console.log('Example app linstening on port 3000!'))
