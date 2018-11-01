@@ -34,7 +34,7 @@ app.get('/page/:pageId', (req, res) => {
                 `
                 <a href="/create">create</a>
                 <a href="/update/${sanitizedTitle}">update</a>
-                <form action="delete_process" method="POST">
+                <form action="/delete_process" method="POST">
                     <input type="hidden" name="id" value="${sanitizedTitle}">
                     <input type="submit" value="delete">
                 </form>
@@ -103,7 +103,7 @@ app.get('/update/:pageId', (req, res) => {
             `,
             `<a href="/create">create</a> <a href="/update/${title}">update</a>`
             )
-            res.end(html)
+            res.send(html)
         })
     })
 })
@@ -120,9 +120,23 @@ app.post('/update_process', (req, res) => {
         const description = post.description
         fs.rename(`data/${id}`, `data/${title}`, (error) => {
             fs.writeFile(`data/${title}`, description, 'utf8', (err) => {
-                res.writeHead(302, {Location: `/page/${title}`})
-                res.end()
+                res.redirect(`/page/${title}`)
             })
+        })
+    })
+})
+
+app.post('/delete_process', (req, res) => {
+    let body = ''
+    req.on('data', (data) => {
+        body = body + data
+    })
+    req.on('end', () => {
+        const post = qs.parse(body)
+        const id = post.id
+        const filteredId = path.parse(id).base
+        fs.unlink(`data/${filteredId}`, (error) => {
+            res.redirect(`/`)
         })
     })
 })
