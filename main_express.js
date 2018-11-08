@@ -23,17 +23,6 @@ app.get('*', function(req, res, next){
 
 // route, routing
 app.get('/', (req, res) => {
-    /*
-    fs.readdir('./data', (error, filelist) => {
-        const title = 'Welcome'
-        const description = 'Hello, Node.js & Express'
-        const list = template.list(filelist)
-        const html = template.HTML(title, list, description,
-            `<a href="/create">create</a>`
-        )
-        res.send(html)
-    })
-    */
     const title = 'Welcome'
     const description = 'Hello, Node.js & Express'
     const list = template.list(req.list)
@@ -47,26 +36,30 @@ app.get('/', (req, res) => {
     res.send(html)
 })
 
-app.get('/page/:pageId', (req, res) => {
+app.get('/page/:pageId', (req, res, next) => {
     const filteredId = path.parse(req.params.pageId).base
     fs.readFile(`data/${filteredId}`, 'utf-8', (err, description) => {
-        const title = req.params.pageId
-        const sanitizedTitle = sanitizeHtml(title)
-        const sanitizedDescription = sanitizeHtml(description, {
-            allowedTags:['h1']
-        })
-        const list = template.list(req.list)
-        const html= template.HTML(sanitizedTitle, list, sanitizedDescription, 
-            `
-            <a href="/create">create</a>
-            <a href="/update/${sanitizedTitle}">update</a>
-            <form action="/delete_process" method="POST">
-                <input type="hidden" name="id" value="${sanitizedTitle}">
-                <input type="submit" value="delete">
-            </form>
-            `
-        )
-        res.send(html)
+        if(err){
+            next(err)
+        } else {
+            const title = req.params.pageId
+            const sanitizedTitle = sanitizeHtml(title)
+            const sanitizedDescription = sanitizeHtml(description, {
+                allowedTags:['h1']
+            })
+            const list = template.list(req.list)
+            const html= template.HTML(sanitizedTitle, list, sanitizedDescription, 
+                `
+                <a href="/create">create</a>
+                <a href="/update/${sanitizedTitle}">update</a>
+                <form action="/delete_process" method="POST">
+                    <input type="hidden" name="id" value="${sanitizedTitle}">
+                    <input type="submit" value="delete">
+                </form>
+                `
+            )
+            res.send(html)
+        }
     })
     console.log(req)
 })
@@ -160,6 +153,15 @@ app.post('/delete_process', (req, res) => {
     })
 })
 
+
+app.use(function(req, res, next) {
+    res.status(404).send('Sorry cannot find that!')
+})
+
+app.use(function(err, req, res, next){
+    console.error(err.stack)
+    res.status(500).send(`Something broke!`)
+})
 
 var hostname = '127.0.0.1'
 var port = 3000
