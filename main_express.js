@@ -1,13 +1,18 @@
 const express = require('express')
+const app = express()
+
 const fs = require('fs')
 const bodyParser = require('body-parser')
 const compression = require('compression')
+const helmet = require('helmet')
+
 const indexRouter = require('./routes/index')
 const topicRouter = require('./routes/topic')
 
-const app = express()
+
 
 // middleware
+app.use(helmet())
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(compression())
