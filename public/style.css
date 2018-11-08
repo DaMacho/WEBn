@@ -1,0 +1,43 @@
+a {
+    /*inline element, use only limited space*/
+    color: blue;
+    text-decoration: none;
+}
+h1 {
+    /*block level element, use entile page*/
+    font-size: 45px;
+    text-align: center;
+    border-bottom: 1px solid gray;
+    margin: 0;
+    padding: 20px;
+}
+ul {
+    width: 100px;
+    margin: 0;
+    padding: 30px;
+}
+#grid {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+}
+#grid ul{
+    padding-left: 33px
+}
+#panel {
+    border-right: 1px solid gray;
+}
+#article {
+    padding-left: 25px;
+    padding-right: 50px;
+}
+@media(max-width: 600px){
+    #grid{
+        display: block;
+    }
+    ol {
+        border-right: none;
+    }
+    h1 {
+        border-bottom: none;
+    }
+}

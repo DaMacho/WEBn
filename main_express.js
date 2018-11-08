@@ -10,6 +10,7 @@ const template = require('./lib/template_express.js')
 const app = express()
 
 // process POST request
+app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(compression())
 app.get('*', function(req, res, next){
@@ -36,7 +37,11 @@ app.get('/', (req, res) => {
     const title = 'Welcome'
     const description = 'Hello, Node.js & Express'
     const list = template.list(req.list)
-    const html = template.HTML(title, list, description,
+    const html = template.HTML(title, list, 
+        `
+        ${description}
+        <img src="/images/coding.jpg" style="width:300px; display:block; margin-top:10px;"
+        `,
         `<a href="/create">create</a>`
     )
     res.send(html)
